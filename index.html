@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .block-container {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+<div class="block-container">
+    <svg id="container-svg" width="200" height="400">
+        <line x1="0" y1="0" x2="0" y2="400" style="stroke:rgb(255,0,0);stroke-width:2" />
+        <svg id="current-block" y="0">
+            <rect x="0" width="20" height="20" style="fill:rgb(0,255, 0);stroke-width:2;stroke:rgb(0,0,0)" />
+            <rect x="20" width="20" height="20" style="fill:rgb(0,255,0);stroke-width:2;stroke:rgb(0,0,0)" />
+            <rect x="40" width="20" height="20" style="fill:rgb(0,255,0);stroke-width:2;stroke:rgb(0,0,0)" />
+            <rect x="60" width="20" height="20" style="fill:rgb(0,255,0);stroke-width:2;stroke:rgb(0,0,0)" />
+        </svg>
+    </svg>
+</div>
+
+<script>
+    const LENGTH_BLOCK_UNIT = 20;
+    const LENGTH_X = 200;
+    const LENGTH_Y = 400;
+
+    let currentBlock;
+    let db = [];
+
+    function initDb() {
+        for (let i = 0; i < 20; i < i++) {
+            let initData = [null, null, null, null, null, null, null, null, null, null];
+            db.push(initData);
+        }
+    }
+
+    function init() {
+        initDb();
+        drawBackground();
+
+        currentBlock = {
+            type: 'line',
+            style: 0,
+            x: 3,
+            y: 0,
+            fill: [{x: 3, y: 0}, {x: 4, y: 0}, {x: 5, y: 0}, {x: 6, y: 0}]
+        }
+
+        createCurrentBlock();
+    }
+
+    function drawBackground() {
+        const container = getElement('container-svg');
+
+        for (let i = 0; i <= LENGTH_X; i += LENGTH_BLOCK_UNIT) {
+            const line = createLine(i, 0, i, LENGTH_Y);
+            container.appendChild(line);
+        }
+
+        for (let i = 0; i <= LENGTH_Y; i += LENGTH_BLOCK_UNIT) {
+            const line = createLine(0, i, LENGTH_X, i);
+            container.appendChild(line);
+        }
+    }
+
+    function createLine(x1, y1, x2, y2) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", 'line');
+        line.setAttribute("x1", x1 + "");
+        line.setAttribute("y1", y1 + "");
+        line.setAttribute("x2", x2 + "");
+        line.setAttribute("y2", y2 + "");
+        line.style.stroke = 'rgb(255,0,0)';
+        line.style.strokeWidth = '2px';
+        return line;
+    }
+
+    function removeElement(id) {
+        const el = getElement(id);
+        el.parentNode.removeChild(el);
+    }
+
+    function createCurrentBlock() {
+        if (db[0][3] != null) {
+            clearInterval(gameIntervale);
+        }
+        removeElement('current-block');
+
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+        svg.setAttribute("id", "current-block");
+        let offsetX = 3;
+        const rect1 = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+        rect1.setAttribute("x", offsetX * LENGTH_BLOCK_UNIT + "");
+        rect1.setAttribute("width", LENGTH_BLOCK_UNIT + "");
+        rect1.setAttribute("height", LENGTH_BLOCK_UNIT + "");
+        rect1.style.fill = 'rgb(0,255,0)';
+        rect1.style.stroke = 'rgb(0,0,0)';
+        rect1.style.strokeWidth = 'rgb(0,0,0)';
+        svg.appendChild(rect1);
+
+        const rect2 = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+        rect2.setAttribute("x", (offsetX + 1) * LENGTH_BLOCK_UNIT + "");
+        rect2.setAttribute("width", LENGTH_BLOCK_UNIT + "");
+        rect2.setAttribute("height", LENGTH_BLOCK_UNIT + "");
+        rect2.style.fill = 'rgb(0,255,0)';
+        rect2.style.stroke = 'rgb(0,0,0)';
+        rect2.style.strokeWidth = 'rgb(0,0,0)';
+        svg.appendChild(rect2);
+
+        const rect3 = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+        rect3.setAttribute("x", LENGTH_BLOCK_UNIT * (2+ offsetX) + "");
+        rect3.setAttribute("width", LENGTH_BLOCK_UNIT + "");
+        rect3.setAttribute("height", LENGTH_BLOCK_UNIT + "");
+        rect3.style.fill = 'rgb(0,255,0)';
+        rect3.style.stroke = 'rgb(0,0,0)';
+        rect3.style.strokeWidth = 'rgb(0,0,0)';
+        svg.appendChild(rect3);
+
+        const rect4 = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+        rect4.setAttribute("x", LENGTH_BLOCK_UNIT * (3 + offsetX) + "");
+        rect4.setAttribute("width", LENGTH_BLOCK_UNIT + "");
+        rect4.setAttribute("height", LENGTH_BLOCK_UNIT + "");
+        rect4.style.fill = 'rgb(0,255,0)';
+        rect4.style.stroke = 'rgb(0,0,0)';
+        rect4.style.strokeWidth = 'rgb(0,0,0)';
+        svg.appendChild(rect4);
+
+        getElement('container-svg').appendChild(svg);
+
+        currentBlock = {
+            type: 'line',
+            style: 0,
+            x: 3,
+            y: 0,
+            fill: [{x: 3, y: 0}, {x: 4, y: 0}, {x: 5, y: 0}, {x: 6, y: 0}]
+        }
+    }
+
+    function getElement(id) {
+        return document.getElementById(id);
+    }
+
+    function updateCurrentBlock() {
+        currentBlock = {
+            type: 'line',
+            style: 0,
+            x: 3,
+            y: 0,
+            fill: [{x: 3, y: 0}, {x: 4, y: 0}, {x: 5, y: 0}, {x: 6, y: 0}]
+        }
+    }
+
+    function checkNextLine() {
+        if (currentBlock.y === 19) {
+            return false;
+        }
+
+        for (let i = 0; i < currentBlock.fill.length; i++) {
+            const el = currentBlock.fill[i];
+            if (db[el.y + 1][el.x]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function addCurrentBlockData() {
+        for (let i = 0; i < currentBlock.fill.length; i++) {
+            const el = currentBlock.fill[i];
+            db[el.y][el.x] = 'rgb(0,255,0)';
+        }
+    }
+
+    function createUnitBlock(x, y, color) {
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+        rect.setAttribute("id", "block-" + x + '-' + y);
+        rect.setAttribute("x", x * LENGTH_BLOCK_UNIT + "");
+        rect.setAttribute("y", y * LENGTH_BLOCK_UNIT + "");
+        rect.setAttribute("width", LENGTH_BLOCK_UNIT + "");
+        rect.setAttribute("height", LENGTH_BLOCK_UNIT + "");
+        rect.style.fill = color;
+        rect.style.stroke = 'rgb(0,0,0)';
+        rect.style.strokeWidth = 'rgb(0,0,0)';
+        return rect;
+    }
+
+    function drawDbData() {
+        for (let i = 0; i < 20; i++) {
+            for (let j = 0; j < 10; j++) {
+                const data = db[i][j];
+                const id = 'block-' + j + '-' + i;
+                const el = getElement(id);
+                if (data) {
+                    if (el) {
+                        continue;
+                    }
+                    const unitBlock = createUnitBlock(j, i, data);
+                    getElement('container-svg').appendChild(unitBlock);
+                } else {
+                    if (el) {
+                        removeElement(id);
+                    }
+                }
+            }
+        }
+    }
+
+    function updateCurrentBlock() {
+        const ele = getElement('current-block');
+        const currentY = Number(ele.getAttribute("y"));
+        ele.setAttribute("y", currentY + LENGTH_BLOCK_UNIT + "");
+        currentBlock.y += 1;
+        currentBlock.fill.forEach(el => {
+            el.y += 1;
+        })
+    }
+
+    function updateView() {
+        if (!checkNextLine()) {
+            addCurrentBlockData();
+            createCurrentBlock();
+        } else {
+            updateCurrentBlock();
+        }
+
+        drawDbData();
+    }
+
+    let gameIntervale = setInterval(function() {
+        updateView();
+    }, 100);
+
+    init();
+</script>
+</body>
+</html>
